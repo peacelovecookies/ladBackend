@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Study case for trainees on lad.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,8 +20,11 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
     "axios": "^0.27.2",
-    "htmlparser2": "^8.0.1",
     "joi": "^17.6.2",
+    "jsdom": "^20.0.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.20"
   }
 }

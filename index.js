@@ -1,20 +1,9 @@
 'use strict';
 
-const Hapi = require('@hapi/hapi');
-const Joi = require('joi');
-const axios = require('axios');
-const domParser = require("htmlparser2");
+import { validateUrls } from './src/utils/manualValidator.js';
+import { fetch } from './src/utils/utils.js';
 
-const isSingleNameHost = (url) => url.includes('.');
-
-const isValidUrl = (url) => {
-    const schema = Joi.string().uri();
-    const firstValidation = schema.validate(url);
-    return firstValidation?.error ? false : isSingleNameHost(url);
-}
-
-const validateUrls = (urls) => urls
-    .reduce((acc, url) => isValidUrl(url) ? acc : [...acc, url], []);
+import Hapi from '@hapi/hapi';
 
 const init = async () => {
 
@@ -33,17 +22,12 @@ const init = async () => {
                 return h.response(`Provided links are invalid: ${invalidUrls.join(', ')}. Please fix them, then try again.`).code(400);
             }
 
-            const promises = urls.map(async (url) => {
-                const { data } = await axios.get(url);
-	            const doc = domParser.parseDocument(data);
-                console.log('test: ', doc);
-                return { url, err: [], data };
-            });
+            const promises = fetch(urls);
 
-            return await Promise.all(promises);
+            return await Promise.allSettled(promises);
         },
 
-        // We can use default validator, but it excludes local domains (single label domain, I guess)
+        // We can use default validator, but it excludes local domains (single label domain)
         // options: {
         //     auth: false,
         //     validate: {
