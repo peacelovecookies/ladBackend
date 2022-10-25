@@ -1,8 +1,7 @@
 'use strict';
 
 import { validateUrls } from './src/utils/manualValidator.js';
-import { fetch } from './src/utils/utils.js';
-
+import { getMostFrequentWords, generatePdf } from './src/utils/utils.js';
 import Hapi from '@hapi/hapi';
 
 const init = async () => {
@@ -22,9 +21,21 @@ const init = async () => {
                 return h.response(`Provided links are invalid: ${invalidUrls.join(', ')}. Please fix them, then try again.`).code(400);
             }
 
-            const promises = fetch(urls);
-
-            return await Promise.allSettled(promises);
+            const countOfWords = 3;
+            const promises = getMostFrequentWords(countOfWords, urls);
+            const results = await Promise.allSettled(promises);
+            
+            /* use this if we need to reject the request when we get the first error
+            for (let i = 0; i < results.length; i += 1) {
+                const result = results[i];
+                if (result.status === 'rejected') {
+                    return h.response(result).code(500);
+                }
+            }
+            */
+            
+            const pdf = generatePdf(results);
+            return h.response(pdf);
         },
 
         // We can use default validator, but it excludes local domains (single label domain)
