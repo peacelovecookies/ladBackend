@@ -3,12 +3,14 @@ import jsdom from "jsdom";
 import axios from 'axios';
 import PDFDocument from 'pdfkit';
 import * as url from 'url';
+import { Readability } from '@mozilla/readability';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const { JSDOM } = jsdom;
 
-const tagsWithText = ["li", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6"]; // add or remove tags if it's needed
+// const tagsWithText = ["li", "span", "p", "h1", "h2", "h3", "h4", "h5", "h6"]; // add or remove tags if it's needed
+const tagsWithText = ["li", "div", "p"]; // add or remove tags if it's needed
 
 const addWords = (wordsCount, innerText) => innerText
     .split(' ')
@@ -19,17 +21,27 @@ const addWords = (wordsCount, innerText) => innerText
     })
 
 const collectWords = (data) => {
-    const { window: { document: { body } } } = new JSDOM(data);
+    const { window: { document } } = new JSDOM(data);
     const wordsCount = {};
-    body
+    const parser = new Readability(document);
+    const { content } = parser.parse();
+    const { window: { document: contentDom } } = new JSDOM(content);
+    const usedTextContent = [];
+    contentDom
         .querySelectorAll('*') // this method may be not super accurate, since textContent takes non-human-readable content... need to refactor this sh*t in the future
         .forEach((node) => {
-            const tag = node.tagName.toLowerCase();
-            if (tagsWithText.includes(tag)) {
-                const { textContent } = node;
-                if (textContent && textContent !== '') addWords(wordsCount, textContent);
+            const { textContent } = node;
+            const children = [...node.children];
+            for (let i = 0; i < children.length; i += 1) {
+                const childNode = children[i];
+                if (childNode.tagName.toLowerCase() === 'div') continue;
             }
+            // if (!usedTextContent.includes(textContent)) {
+                addWords(wordsCount, textContent);
+                usedTextContent.push(textContent)
+            // }
         });
+        // console.log('test: ', usedTextContent);
     return wordsCount;
 }
 
