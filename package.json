@@ -25,7 +25,8 @@
     "joi": "^17.6.2",
     "jsdom": "^20.0.1",
     "lodash": "^4.17.21",
-    "pdfkit": "^0.13.0"
+    "pdfkit": "^0.13.0",
+    "pdfkit-table": "^0.1.99"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

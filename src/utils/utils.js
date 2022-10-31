@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import jsdom from "jsdom";
 import axios from 'axios';
-import PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit-table';
 import * as url from 'url';
+import path from 'path';
 import { Readability } from '@mozilla/readability';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -69,17 +70,34 @@ export const getMostFrequentWords = (wordsCount, urls) => urls.map(async (url) =
 
 export const generatePdf = (fetchedDataObj) => {
     const fulfilled = fetchedDataObj.filter((dataObj) => dataObj.status === 'fulfilled')
-    const pdf = new PDFDocument();
+    const pdf = new PDFDocument({ margin: 30, size: 'A4' });
     // in this case we don't add result of rejected requests... keep it in mind
     fulfilled.forEach((dataObj) => {
         const { url: link } = dataObj.value;
-        const topList = dataObj?.value?.topList.join('  |  ');
+        const { topList } = dataObj?.value;
+        const fontPath = path.join(__dirname, '..', 'fonts/times_new_roman.ttf');
+        const table = { 
+            title: '',
+            headers: ['', '', ''],
+            datas: [],
+            rows: [topList],
+        };
+        const tableOptions = {
+            prepareRow: () => pdf.font(fontPath),
+            prepareHeader: () => pdf.font(fontPath),
+            font: fontPath,
+            hideHeader: true,
+            divider: {
+                horizontal: { disabled: true, width: 0.5, opacity: 0.5 }
+            },
+        };
         pdf
             .font(`${__dirname}/../fonts/times_new_roman.ttf`)
             .text(link, { underline: true })
             .moveDown()
-            .text(topList, { align: 'justify' })
-            .moveDown(2)
+            .table(table, tableOptions);
+
+        pdf.moveDown(2);
     });
     pdf.end();
     return pdf;
