@@ -22,9 +22,9 @@ const init = async () => {
             }
 
             const countOfWords = 3;
-            const promises = getMostFrequentWords(countOfWords, urls);
+            const promises = getMostFrequentWords(countOfWords, urls, 3000);
             const results = await Promise.allSettled(promises);
-            
+
             /* use this if we need to reject the request when we get the first error
             for (let i = 0; i < results.length; i += 1) {
                 const result = results[i];
@@ -33,7 +33,7 @@ const init = async () => {
                 }
             }
             */
-            
+
             const pdf = generatePdf(results);
             return h.response(pdf);
         },
