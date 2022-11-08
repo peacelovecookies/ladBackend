@@ -1,12 +1,12 @@
-import { describe, expect, test } from 'jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
-import manualValidator from '../../../src/utils/manualValidator.js';
+import { validateUrls } from '../../../src/utils/manualValidator.js';
 
 
 describe('Manual validation of incoming urls', () => {
   test('invalid urls', () => {
     const invalidUrls = [5, 'invalid.url', 'http://'];
-    const result = manualValidator(invalidUrls);
+    const result = validateUrls(invalidUrls);
 
     expect(result.length).toBe(invalidUrls.length);
     expect(result).toEqual(invalidUrls);
@@ -14,7 +14,7 @@ describe('Manual validation of incoming urls', () => {
  
   test('single-name domains', () => {
     const invalidUrls = ['http://hey', 'https://single-name-domain', 'http://localhost:9090'];
-    const result = manualValidator(invalidUrls);
+    const result = validateUrls(invalidUrls);
 
     expect(result.length).toBe(invalidUrls.length);
     expect(result).toEqual(invalidUrls);
@@ -22,9 +22,9 @@ describe('Manual validation of incoming urls', () => {
 
   test('valid urls', () => {
     const invalidUrls = ['http://google.com', 'https://ipotekabank.uz', 'https://docs.google.com'];
-    const result = manualValidator(invalidUrls);
+    const result = validateUrls(invalidUrls);
 
-    expect(result).toHaveSize(0);
+    expect(result).toEqual([]);
   });
 });
 
