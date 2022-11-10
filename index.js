@@ -2,7 +2,7 @@
 
 import Hapi from '@hapi/hapi';
 
-import Router from './routes/Router.js';
+import Router from './src/routes/Router.js';
 
 const init = async () => {
 

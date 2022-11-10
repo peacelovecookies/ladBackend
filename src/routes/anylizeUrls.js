@@ -1,5 +1,5 @@
-import { validateUrls } from '../src/utils/manualValidator.js';
-import { getMostFrequentWords, generatePdf } from '../src/utils/utils.js';
+import { validateUrls } from '../utils/manualValidator.js';
+import { getMostFrequentWords, generatePdf } from '../utils/utils.js';
 
 export default [{ // array, cause there can be several methods
     method: 'POST',

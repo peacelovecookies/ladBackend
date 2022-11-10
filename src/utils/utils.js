@@ -17,7 +17,7 @@ const addWord = (acc, word) => {
 
 const collectWords = (data) => {
     try {
-        const content = htmlToText(data);
+        const content = htmlToText(data, { selectors: [ { selector: 'img', format: 'skip' } ] });
         return content
             .split(/\s+/)
             .reduce(addWord, {});
@@ -53,7 +53,7 @@ const fulfilledHandler = (pdf) => (dataObj) => {
     const { topList } = dataObj?.value;
     const table = { 
         title: '',
-        headers: topList, // we won't see header anyway, but without it method will throw an error
+        headers: topList || [], // we won't see header anyway, but without it method will throw an error
         datas: [],
         rows: [topList],
     };
