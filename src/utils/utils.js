@@ -19,6 +19,7 @@ const collectWords = (data) => {
     try {
         const content = htmlToText(data, { selectors: [ { selector: 'img', format: 'skip' } ] });
         return content
+            .replace(/[.,!:;*"'?]+[\s]+/, ' ') // to include last word in sentence
             .split(/\s+/)
             .reduce(addWord, {});
     } catch(e) { // yet I don't really know how this method works, so I have to catch any possible error to analyze and handle it in the future
